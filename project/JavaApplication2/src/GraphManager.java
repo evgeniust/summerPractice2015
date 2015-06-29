@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class GraphManager {
     public int startPoint;
-    public int endPoint = 5;
+    public int endPoint = 4;
     private int edgeCount;
     public int pointCount;
     public LinkedList<Boolean> isVisit;
@@ -23,21 +23,28 @@ public class GraphManager {
     public ArrayList<ArrayList<Pair<Integer,Integer>>> table;
     public ArrayList<Integer> edgesNumbers;
 
-    public void readFromFile() throws FileNotFoundException{
+    public GraphManager(int startPoint) {
+        this.startPoint = startPoint;
+    }
+    
+    
+    
+    public void readFromFile(File file) throws FileNotFoundException{
         
-        Scanner scanner = new Scanner(new File("D://input.txt"));
+        Scanner scanner = new Scanner(file);
 
-        startPoint = Integer.parseInt(scanner.next());
+//        startPoint = Integer.parseInt(scanner.next());
         edgeCount = Integer.parseInt(scanner.next());
         pointCount = Integer.parseInt(scanner.next());
-
+        endPoint = pointCount - 1;
+        
         table = new ArrayList<ArrayList<Pair<Integer,Integer>>>(pointCount);
         isVisit = new LinkedList<>(Collections.nCopies(pointCount,Boolean.FALSE));
         prevPoints = new ArrayList<>(Collections.nCopies(pointCount,0));
         distance = new ArrayList<>(Collections.nCopies(pointCount,Integer.MAX_VALUE));
         edgesNumbers = new ArrayList<>(Collections.nCopies(pointCount,0));
 
-        for (int i = 0; i < pointCount - 1; i++) {
+        for (int i = 0; i < pointCount; i++) {
             ArrayList<Pair<Integer,Integer>> sublist = new ArrayList<Pair<Integer,Integer>>();
             int edges = Integer.parseInt(scanner.next());
             edgesNumbers.add(i,edges);

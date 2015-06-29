@@ -2,25 +2,22 @@
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.FileNotFoundException;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 /*
@@ -34,14 +31,32 @@ import javax.swing.JPanel;
  * @author Zhenya
  */
 public class FormWorker extends javax.swing.JFrame {
+    private Integer startPoint;
+    private DeikstraManager algoManager;
+    private GraphManager graph;
+    private BufferedImage background;
     /**
      * Creates new form FormWorker
      */
     public FormWorker() {
-        initComponents();
+        addWindowListener(new WindowListener() {
+            public void windowOpened(WindowEvent event) { }
+            public void windowClosing(WindowEvent event) {  }
+            public void windowActivated(WindowEvent event) {
+                
+               jPanel1.getGraphics().drawImage(background, 0, 0,Color.BLACK, null);
+               
+                
+            }
+            public void windowClosed(WindowEvent event) { }
+            public void windowDeactivated(WindowEvent event) { }
+            public void windowDeiconified(WindowEvent event) { }
+            public void windowIconified(WindowEvent event) { }
+        });
         
+        initComponents();       
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -51,19 +66,29 @@ public class FormWorker extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jButton3 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
+        jButton4 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        textArea1 = new java.awt.TextArea();
+
+        jButton3.setText("jButton3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(" Визуализация алгоритма Дейкстры");
-        setPreferredSize(new java.awt.Dimension(700, 500));
+        setPreferredSize(new java.awt.Dimension(700, 600));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(600, 400));
+        jPanel1.setRequestFocusEnabled(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -73,44 +98,62 @@ public class FormWorker extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 299, Short.MAX_VALUE)
         );
 
-        jButton1.setText("Начать");
+        jLabel2.setText("Путь к файлу");
+        jLabel2.setToolTipText("");
+
+        jButton1.setText("Загрузить");
+        jButton1.setActionCommand("Загрузить граф");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Следующий шаг");
+        jLabel5.setText("Стартовая вершина");
 
-        jLabel2.setText("Путь к файлу");
-        jLabel2.setToolTipText("");
+        jScrollPane1.setViewportView(jTextPane1);
 
-        jLabel3.setText("Обозначения");
-        jLabel3.setToolTipText("");
+        jButton4.setText("Следующий шаг");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Задать");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
-                .addGap(68, 68, 68))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(321, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addGap(237, 237, 237))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1))
-                    .addComponent(jLabel3))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel1))
+                        .addComponent(jButton1)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1))
+                    .addComponent(jButton2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(textArea1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
                 .addGap(33, 33, 33))
         );
         layout.setVerticalGroup(
@@ -118,19 +161,26 @@ public class FormWorker extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addComponent(jLabel2)
-                        .addGap(55, 55, 55)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addGap(26, 26, 26)
                         .addComponent(jLabel1)
-                        .addGap(38, 38, 38)
-                        .addComponent(jLabel3)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
+                        .addGap(4, 4, 4)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(31, 31, 31)
+                .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -152,16 +202,25 @@ public class FormWorker extends javax.swing.JFrame {
 }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:     
-        GraphManager graph = new GraphManager();
-        try{
-            graph.readFromFile();
-        }
-        catch(FileNotFoundException e){System.out.println(e);}
+        File file = null;
+        JFileChooser fileopen = new JFileChooser();             
+                int ret = fileopen.showDialog(null, "Открыть файл");                
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    file = fileopen.getSelectedFile();                    
+                }
         
+        graph = new GraphManager(startPoint);
+        System.out.println("startPoint = "+startPoint);
+        try{
+            graph.readFromFile(file);
+        }
+        
+        catch(FileNotFoundException e){System.out.println(e);}
+        System.out.println("S = "+graph.table.size());
         System.out.println(jPanel1.getHeight()+" "+jPanel1.getWidth());
         System.out.println(jPanel1.getX()+" "+jPanel1.getY());
         
-        BufferedImage background = new BufferedImage(500,400,BufferedImage.TYPE_INT_RGB);
+        background = new BufferedImage(500,400,BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = background.createGraphics();
             
         
@@ -169,8 +228,9 @@ public class FormWorker extends javax.swing.JFrame {
         graphics.setColor(Color.green);
         graphics.fillRect(0, 0, background.getWidth(), background.getHeight());
         graphics.setColor(Color.BLACK);
-        print_points(graphics);
-        print_edges(graphics,graph);
+        
+        print_points(graphics,graph);
+        print_edges(graphics,graph,background);
         
         this.setLayout(new BorderLayout());
         
@@ -181,17 +241,36 @@ public class FormWorker extends javax.swing.JFrame {
             Thread.sleep(1000);
         }catch(InterruptedException e){}
         
-        BufferedImage copyImage = deepCopy(background);
+        //jPanel1.requestFocus();
+        algoManager = new DeikstraManager(graph, background,this,this.textArea1,this.jPanel1);
         
-        
-        showEdge(copyImage,graph,1,2);
+        algoManager.start();
+//algoManager.start();
+//        algoManager.startDeikstra(graph, background,this);
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        
+        //jPanel1.repaint();
+        algoManager.resume();
+        
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        //graph.setStartPoint(Integer.parseInt(jTextPane1.getText()));
+        startPoint = Integer.parseInt(jTextPane1.getText());
+        System.out.println("Pane "+jTextPane1.getText());
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     
     
 
-private void showEdge(BufferedImage copyImage,GraphManager graph,int from,int to){
+public void showEdge(BufferedImage background,GraphManager graph,int from,int to){
+        BufferedImage copyImage = deepCopy(background);
         Graphics2D copyGraphics = (Graphics2D)copyImage.getGraphics();        
         double angle = 360 / graph.table.size()*Math.PI / 180;
 
@@ -222,11 +301,9 @@ private void showEdge(BufferedImage copyImage,GraphManager graph,int from,int to
         
     }
 
-private void dropPoint(){
-    /*
-                 void drop_edge(vector<vector<pair<int, int>>> table, int to)
-             {
-                 double angle = 360 / pointCoun*PI / 180;
+public void dropPoint(GraphManager graph,BufferedImage image,int pointNum){
+
+                 double angle = 360 / graph.table.size()*Math.PI / 180;
 
                  int centerX = 250;
                  int centerY = 150;
@@ -235,28 +312,22 @@ private void dropPoint(){
                  int startX = 250, startY = 25;
 
                  double curX, curY;
-
-                 Graphics^ graph = Graphics::FromImage(background);
-
-                 cur_angle = to*angle;
+                 Graphics2D graphics = (Graphics2D)image.getGraphics();
+                                  
+                 cur_angle = pointNum*angle;
                  curX = (startX - centerX)*cos(cur_angle) - (startY - centerY)*sin(cur_angle) + centerX;
                  curY = (startX - centerX)*sin(cur_angle) + (startY - centerY)*cos(cur_angle) + centerY;
 
+                 graphics.setColor(Color.red);
+                 graphics.setStroke(new BasicStroke(3));
 
-                 System::Drawing::SolidBrush^ myBrush =
-                     gcnew System::Drawing::SolidBrush(System::Drawing::Color::Red);
-                 graph->FillEllipse(myBrush, Rectangle(curX - 15, curY - 15, 30, 30));
-
-                 pictureBox1->Image = background;
-                 pictureBox1->Refresh();
-             }
-    */
+                 graphics.drawOval((int)curX - 15, (int)curY - 15, 30, 30);
+                 this.setVisible(true);    
 }
 
-private void print_points(Graphics2D graphics)
+private void print_points(Graphics2D graphics,GraphManager graph)
              {
-                 int pointCoun = 5;
-                 double angle = 360 / pointCoun*Math.PI / 180;
+                 double angle = 360 / graph.table.size()*Math.PI / 180;
                  ArrayList<Map<Integer,Integer>> a;
                  int centerX = 250;
                  int centerY = 150;
@@ -266,30 +337,28 @@ private void print_points(Graphics2D graphics)
 
                  double curX, curY;
 
-                 //Graphics^ graph = Graphics::FromImage(background);
-
-                 for (int i = 0; i < pointCoun; i++, cur_angle += angle)
+                 for (int i = 0; i < graph.table.size(); i++, cur_angle += angle)
                  {
                      curX = (startX - centerX)*cos(cur_angle) - (startY - centerY)*sin(cur_angle) + centerX;
                      curY = (startX - centerX)*sin(cur_angle) + (startY - centerY)*cos(cur_angle) + centerY;
 
-                    
-                    
                      graphics.drawOval((int)curX - 15, (int)curY - 15, 30, 30);
-                     graphics.drawString(String.valueOf(i), (int)curX - 15, (int) curY-15);
-                     //jPanel1.getGraphics().drawOval((int)curX - 15, (int)curY - 15, 30, 30);
-                     //graph->DrawEllipse(pen, curX - 15, curY - 15, 30, 30);
-                     //jPanel1.getGraphics().drawString(String.valueOf(i), (int)curX - 15, (int) curY-15);
-                     //graph->DrawString(i.ToString(), this->Font, Brushes::Red, (float)curX - 15, (float)curY + 20);
+                     graphics.setColor(Color.blue);
+                     graphics.setFont(new Font("Tahoma", Font.PLAIN, 15));
+                     graphics.drawString(String.valueOf(i), (int)curX, (int) curY);
+                     graphics.setColor(Color.black);
+                     
                  }
-                 
-                 
-                 //pictureBox1->Image = background;
              }
-private void print_edges(Graphics2D graphics,GraphManager graph)
+
+private double ax1,ax2,ay1,ay2;
+public static final double angle = Math.PI/10;
+public static final double len = 10;
+
+private void print_edges(Graphics2D graphics,GraphManager graph,BufferedImage image)
              {
                  double angle = 360 / graph.table.size()*Math.PI / 180;
-
+                 
                  int centerX = 250;
                  int centerY = 150;
                  int radius = 125;
@@ -297,10 +366,8 @@ private void print_edges(Graphics2D graphics,GraphManager graph)
 
                  double curX1, curY1, curX2, curY2;
 
-                 //Graphics^ graph = Graphics::FromImage(background);
-
                  double cur_angle1, cur_angle2;
-                 for (int i = 0; i < graph.pointCount; i++)
+                 for (int i = 0; i < graph.table.size(); i++)
                 {
                     for (int j = 0; j < graph.edgesNumbers.get(i); j++)
                     {
@@ -311,17 +378,48 @@ private void print_edges(Graphics2D graphics,GraphManager graph)
                         cur_angle2 = graph.table.get(i).get(j).getFirst()*angle;
                         curX2 = (startX - centerX)*cos(cur_angle2) - (startY - centerY)*sin(cur_angle2) + centerX;
                         curY2 = (startX - centerX)*sin(cur_angle2) + (startY - centerY)*cos(cur_angle2) + centerY;
+                        
+                        graphics.draw (new Line2D.Double (curX1,curY1,curX2,curY2));
 
-                        //Pen^ pen = gcnew Pen(Color::Black, 3);
-                        //pen->DashStyle = System::Drawing::Drawing2D::DashStyle::Custom;
-                        //pen->EndCap = System::Drawing::Drawing2D::LineCap::ArrowAnchor;
-                        //System.out.println(curX1+" "+curY1+" "+curX2+" "+curY2);
-                        graphics.drawLine((int)curX1, (int)curY1, (int)curX2, (int)curY2);
-                        //jPanel1.getGraphics().drawLine((int)curX1, (int)curY1, (int)curX2, (int)curY2);
-                        //graph->DrawLine(pen, (int)curX1, (int)curY1, (int)curX2, (int)curY2);
+  // paint arrowhead
+                        arrHead (curX1,curY1,curX2,curY2);
+                        graphics.draw (new Line2D.Double (curX2,curY2,ax1,ay1));
+                        graphics.draw (new Line2D.Double (curX2,curY2,ax2,ay2));
+//                        this.add(arrow);
+                        graphics.drawString(String.valueOf(graph.table.get(i).get(j).getSecond()), (int)(curX1 + curX2)/2, (int)(curY1 + curY2)/2);
+                        //graphics.drawLine((int)curX1, (int)curY1, (int)curX2, (int)curY2);
                     }
                 }
              }
+
+private void arrHead (double x1, double y1, double x2, double y2)
+{  double c,a,beta,theta,phi;
+   c = Math.sqrt ((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+   if (Math.abs(x2-x1) < 1e-6)
+	if (y2<y1) theta = Math.PI/2;
+	else theta = - Math.PI/2; 
+   else
+     { if (x2>x1)
+   	   theta = Math.atan ((y1-y2)/(x2-x1)) ;
+   	else
+	   theta = Math.atan ((y1-y2)/(x1-x2));
+     }
+   a = Math.sqrt (len*len  + c*c - 2*len*c*Math.cos(angle));
+   beta = Math.asin (len*Math.sin(angle)/a);
+   phi = theta - beta;
+   ay1 = y1 - a * Math.sin(phi);		// coordinates of arrowhead endpoint
+   if (x2>x1) 
+	ax1 = x1 + a * Math.cos(phi);
+   else
+	ax1 = x1 - a * Math.cos(phi);
+   phi = theta + beta;				// second arrowhead endpoint
+   ay2 = y1 - a * Math.sin(phi);
+   if (x2>x1)
+	ax2 = x1 + a * Math.cos(phi);
+   else 
+	ax2 = x1 - a * Math.cos(phi);
+}
+
 private static void fill_points(Graphics2D graphics,GraphManager graph){
         double angle = 360 / graph.pointCount * Math.PI / 180;
         ArrayList<Map<Integer,Integer>> a;
@@ -356,10 +454,16 @@ private static void fill_points(Graphics2D graphics,GraphManager graph){
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextPane jTextPane1;
+    public java.awt.TextArea textArea1;
     // End of variables declaration//GEN-END:variables
 
 }
