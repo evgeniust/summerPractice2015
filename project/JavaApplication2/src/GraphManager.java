@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class GraphManager {
     public int startPoint;
-    public int endPoint = 4;
+    public int endPoint;
     private int edgeCount;
     public int pointCount;
     public LinkedList<Boolean> isVisit;
@@ -33,7 +33,6 @@ public class GraphManager {
         
         Scanner scanner = new Scanner(file);
 
-//        startPoint = Integer.parseInt(scanner.next());
         edgeCount = Integer.parseInt(scanner.next());
         pointCount = Integer.parseInt(scanner.next());
         endPoint = pointCount - 1;
@@ -57,11 +56,6 @@ public class GraphManager {
                 sublist.add(j, new Pair<Integer, Integer>(toPoint, cost));
             }
             table.add(sublist);
-
-            System.out.println("Список"+i);
-            for (Pair<Integer, Integer> integerIntegerPair : sublist) {
-                System.out.println(integerIntegerPair.getFirst()+" "+integerIntegerPair.getSecond());
-            }
         }
     }
 }

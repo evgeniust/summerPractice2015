@@ -16,9 +16,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import java.util.ArrayList;
 import java.util.Map;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -35,18 +34,20 @@ public class FormWorker extends javax.swing.JFrame {
     private DeikstraManager algoManager;
     private GraphManager graph;
     private BufferedImage background;
+    private BufferedImage curImage;
+    private double ax1,ax2,ay1,ay2;
+    private static final double angle = Math.PI/10;
+    private static final double len = 10;
     /**
      * Creates new form FormWorker
      */
+    
     public FormWorker() {
         addWindowListener(new WindowListener() {
             public void windowOpened(WindowEvent event) { }
             public void windowClosing(WindowEvent event) {  }
-            public void windowActivated(WindowEvent event) {
-                
-               jPanel1.getGraphics().drawImage(background, 0, 0,Color.BLACK, null);
-               
-                
+            public void windowActivated(WindowEvent event) {            
+               jPanel1.getGraphics().drawImage(curImage, 0, 0,Color.BLACK, null);               
             }
             public void windowClosed(WindowEvent event) { }
             public void windowDeactivated(WindowEvent event) { }
@@ -185,21 +186,14 @@ public class FormWorker extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-/*public void paint(Graphics g) {       
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(10));
-        g2.setColor(Color.red);
-        Line2D lin = new Line2D.Float(100, 100, 250, 500);
-        
-        g2.draw(lin);
-        repaint();
-    }*/
+
     private static BufferedImage deepCopy(BufferedImage bi) {
         ColorModel cm = bi.getColorModel();
         boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
         WritableRaster raster = bi.copyData(null);
         return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:     
         File file = null;
@@ -216,14 +210,10 @@ public class FormWorker extends javax.swing.JFrame {
         }
         
         catch(FileNotFoundException e){System.out.println(e);}
-        System.out.println("S = "+graph.table.size());
-        System.out.println(jPanel1.getHeight()+" "+jPanel1.getWidth());
-        System.out.println(jPanel1.getX()+" "+jPanel1.getY());
         
         background = new BufferedImage(500,400,BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = background.createGraphics();
             
-        
         graphics.setFont(new Font("Serif", Font.PLAIN, 20));
         graphics.setColor(Color.green);
         graphics.fillRect(0, 0, background.getWidth(), background.getHeight());
@@ -241,37 +231,42 @@ public class FormWorker extends javax.swing.JFrame {
             Thread.sleep(1000);
         }catch(InterruptedException e){}
         
-        //jPanel1.requestFocus();
-        algoManager = new DeikstraManager(graph, background,this,this.textArea1,this.jPanel1);
-        
+        algoManager = new DeikstraManager(graph, background,this,this.textArea1,this.jPanel1);       
         algoManager.start();
-//algoManager.start();
-//        algoManager.startDeikstra(graph, background,this);
-        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        
-        //jPanel1.repaint();
-        algoManager.resume();
-        
-        
+
+        algoManager.resume();       
+        if(!algoManager.isAlive()){
+            String resLine ="";
+            for (int i = 0; i < graph.distance.size(); i++) {
+                resLine +="Вершина "+i+": ";
+                if(graph.distance.get(i) == Integer.MAX_VALUE) resLine += String.valueOf((char)8734)+"\n";
+                else resLine += graph.distance.get(i)+"\n";
+        }
+            
+            JOptionPane.showMessageDialog(this, "Алгоритм завершил работу.\nМетки вершин:\n"+resLine);
+            
+            textArea1.append("\nАлгоритм завершил работу.\nМетки вершин:\n"+resLine);
+            jTextPane1.setText(null);
+            jPanel1.removeAll();
+            textArea1.setText(null);
+            jPanel1.repaint();
+            curImage = null;
+            graph = null;
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        //graph.setStartPoint(Integer.parseInt(jTextPane1.getText()));
         startPoint = Integer.parseInt(jTextPane1.getText());
-        System.out.println("Pane "+jTextPane1.getText());
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    
-    
 
 public void showEdge(BufferedImage background,GraphManager graph,int from,int to){
         BufferedImage copyImage = deepCopy(background);
-        Graphics2D copyGraphics = (Graphics2D)copyImage.getGraphics();        
+        Graphics2D copyGraphics = (Graphics2D)copyImage.getGraphics();
+        this.showPointCost(copyGraphics);
         double angle = 360 / graph.table.size()*Math.PI / 180;
 
                  int centerX = 250;
@@ -297,9 +292,35 @@ public void showEdge(BufferedImage background,GraphManager graph,int from,int to
         jPanel1.getGraphics().drawImage(copyImage, 0, 0, null);
         this.pack();
         this.setVisible(true);
-
         
+        curImage = this.deepCopy(copyImage);      
     }
+
+public void showPointCost(Graphics2D copyGraphics){
+                 double angle = 360 / graph.table.size()*Math.PI / 180;
+                 ArrayList<Map<Integer,Integer>> a;
+                 int centerX = 250;
+                 int centerY = 150;
+                 int radius = 125;
+                 double cur_angle = 0;
+                 int startX = 250, startY = 25;
+                 
+                 double curX, curY;
+
+                 for (int i = 0; i < graph.table.size(); i++, cur_angle += angle)
+                 {
+                     curX = (startX - centerX)*cos(cur_angle) - (startY - centerY)*sin(cur_angle) + centerX;
+                     curY = (startX - centerX)*sin(cur_angle) + (startY - centerY)*cos(cur_angle) + centerY;
+
+                     copyGraphics.setFont(new Font("Tahoma", Font.PLAIN, 15));
+                     copyGraphics.setColor(Color.red);
+                     if(graph.distance.get(i) == Integer.MAX_VALUE) copyGraphics.drawString(String.valueOf((char)8734), (int)curX - 15, (int) curY - 15); 
+                     else copyGraphics.drawString(String.valueOf(graph.distance.get(i)), (int)curX - 15, (int) curY - 15);                
+                     copyGraphics.setColor(Color.black);
+                     
+                 }
+                 
+}
 
 public void dropPoint(GraphManager graph,BufferedImage image,int pointNum){
 
@@ -325,8 +346,7 @@ public void dropPoint(GraphManager graph,BufferedImage image,int pointNum){
                  this.setVisible(true);    
 }
 
-private void print_points(Graphics2D graphics,GraphManager graph)
-             {
+private void print_points(Graphics2D graphics,GraphManager graph){
                  double angle = 360 / graph.table.size()*Math.PI / 180;
                  ArrayList<Map<Integer,Integer>> a;
                  int centerX = 250;
@@ -350,10 +370,6 @@ private void print_points(Graphics2D graphics,GraphManager graph)
                      
                  }
              }
-
-private double ax1,ax2,ay1,ay2;
-public static final double angle = Math.PI/10;
-public static final double len = 10;
 
 private void print_edges(Graphics2D graphics,GraphManager graph,BufferedImage image)
              {
@@ -381,13 +397,10 @@ private void print_edges(Graphics2D graphics,GraphManager graph,BufferedImage im
                         
                         graphics.draw (new Line2D.Double (curX1,curY1,curX2,curY2));
 
-  // paint arrowhead
                         arrHead (curX1,curY1,curX2,curY2);
                         graphics.draw (new Line2D.Double (curX2,curY2,ax1,ay1));
-                        graphics.draw (new Line2D.Double (curX2,curY2,ax2,ay2));
-//                        this.add(arrow);
+                        graphics.draw (new Line2D.Double (curX2,curY2,ax2,ay2));                       
                         graphics.drawString(String.valueOf(graph.table.get(i).get(j).getSecond()), (int)(curX1 + curX2)/2, (int)(curY1 + curY2)/2);
-                        //graphics.drawLine((int)curX1, (int)curY1, (int)curX2, (int)curY2);
                     }
                 }
              }
@@ -419,32 +432,6 @@ private void arrHead (double x1, double y1, double x2, double y2)
    else 
 	ax2 = x1 - a * Math.cos(phi);
 }
-
-private static void fill_points(Graphics2D graphics,GraphManager graph){
-        double angle = 360 / graph.pointCount * Math.PI / 180;
-        ArrayList<Map<Integer,Integer>> a;
-        int centerX = 250;
-        int centerY = 150;
-        int radius = 125;
-        double cur_angle = 0;
-        int startX = 250, startY = 25;
-
-        double curX, curY;
-
-        for (int i = 0; i < graph.pointCount; i++, cur_angle += angle)
-        {
-            curX = (startX - centerX)*Math.cos(cur_angle) - (startY - centerY)*Math.sin(cur_angle) + centerX;
-            curY = (startX - centerX)*Math.sin(cur_angle) + (startY - centerY)*Math.cos(cur_angle) + centerY;
-
-            graphics.setColor(Color.WHITE);
-            graphics.setFont(new Font("Tahoma", Font.ITALIC, 15));
-
-            graphics.fillOval((int)curX, (int)curY, 28, 28);
-
-            graphics.drawString(String.valueOf(i), (int)curX, (int) curY);
-        }
-    }
-
            /*  
     /**
      * @param args the command line arguments

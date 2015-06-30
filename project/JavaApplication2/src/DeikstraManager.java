@@ -36,7 +36,6 @@ public class DeikstraManager extends Thread{
     
     public void run(){
         graph.distance = new ArrayList<>(Collections.nCopies(graph.pointCount,Integer.MAX_VALUE));
-        System.out.println("dfsd"+graph.startPoint);
         graph.distance.set(graph.startPoint, 0);
 
         for (int i = 0; i < graph.pointCount; i++) {
@@ -47,26 +46,20 @@ public class DeikstraManager extends Thread{
                     curPoint = j;
                 }
             }
-            System.out.println("CurPoint="+curPoint);
             if(graph.distance.get(curPoint) == Integer.MAX_VALUE){
-                System.out.println("Капец");
                 break;
             }
-            graph.isVisit.set(curPoint, Boolean.TRUE);
-            form.dropPoint(graph, copyImage, curPoint);
             
+            graph.isVisit.set(curPoint, Boolean.TRUE);
+            
+            if(graph.table.get(curPoint).size() == 0) form.dropPoint(graph, copyImage, curPoint);
             for (int j = 0; j < graph.table.get(curPoint).size(); j++) {
-                //panel.getGraphics().drawImage(copyImage, 0, 0,Color.BLACK, null);
-                this.suspend();
-                
-                
+                this.suspend();      
                 textArea.append("\nТекущая вершина = "+curPoint+"\n");
 
                 int to  = graph.table.get(curPoint).get(j).getFirst();
                 int cost = graph.table.get(curPoint).get(j).getSecond();
-                //if(j == graph.table.get(curPoint).size() - 1 || 0 == graph.table.get(curPoint).size())form.dropPoint(graph, copyImage, curPoint);
-                
-                form.showEdge(copyImage, graph, curPoint, to);
+                if(j == graph.table.get(curPoint).size() - 1) form.dropPoint(graph, copyImage, curPoint);
                 textArea.append("\nТекущее ребро = "+curPoint+"->"+to+" Стоимость ="+cost+"\n");
   
                 if(graph.distance.get(curPoint) + cost < graph.distance.get(to)){
@@ -79,13 +72,18 @@ public class DeikstraManager extends Thread{
                         textArea.append("Cтоимость ребра не оптимальна, так как неверно: ");
                         textArea.append(String.valueOf(graph.distance.get(curPoint)) + " + " + String.valueOf(cost) + " < " + String.valueOf(graph.distance.get(to))+"\n");
                     }
+                    form.showEdge(copyImage, graph, curPoint, to);
+
                     textArea.append("Метки вершин:\n");
                     for (int k = 0; k < graph.distance.size();k++)
                     {
                         textArea.append("Вершина["+String.valueOf(k)+"] = "+String.valueOf(graph.distance.get(k))+"\n");
                     }
             }
+            
+            
         }
+        //form.dropPoint(graph, copyImage, g);
 
         ArrayList<Integer> path = new ArrayList<>();
         for (int v = graph.endPoint; v != graph.startPoint; v = graph.prevPoints.get(v))
@@ -93,18 +91,5 @@ public class DeikstraManager extends Thread{
             path.add(v);
         }
         path.add(graph.startPoint);
-
-        System.out.println("Путь");
-        for (int j = path.size() - 1; j >= 0; j--) {
-            System.out.print(path.get(j) + " ");
-        }
-        String resLine ="";
-        for (int i = 0; i < graph.distance.size(); i++) {
-            resLine +="Вершина "+i+": "+ graph.distance.get(i)+"\n";
-            
-        }
-        //JOptionPane.showMessageDialog(form, "Алгоритм завершил работу.\nМетки вершин:\n"+resLine);
-        textArea.append("\nАлгоритм завершил работу.\nМетки вершин:\n"+resLine);
-        //panel.repaint();
     }
 }
